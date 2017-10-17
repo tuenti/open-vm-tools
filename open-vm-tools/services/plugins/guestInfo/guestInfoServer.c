@@ -336,6 +336,7 @@ GuestInfoGather(gpointer data)
    GuestDiskInfo *diskInfo = NULL;
 #endif
    NicInfoV3 *nicInfo = NULL;
+   gchar *nicPrefix = NULL;
    ToolsAppCtx *ctx = data;
 
    g_debug("Entered guest info gather.\n");
@@ -399,13 +400,17 @@ GuestInfoGather(gpointer data)
    }
 
    /* Get NIC information. */
-   if (!GuestInfo_GetNicInfo(&nicInfo)) {
+   nicPrefix =
+      g_key_file_get_string(ctx->config, CONFGROUPNAME_GUESTINFO,
+                             CONFNAME_GUESTINFO_NICPREFIX, NULL);
+   if (!GuestInfo_GetNicInfo(nicPrefix, &nicInfo)) {
       g_warning("Failed to get nic info.\n");
       /*
        * Return an empty nic info.
        */
       nicInfo = Util_SafeCalloc(1, sizeof (struct NicInfoV3));
    }
+   g_free(nicPrefix);
 
    if (GuestInfo_IsEqual_NicInfoV3(nicInfo, gInfoCache.nicInfo)) {
       g_debug("Nic info not changed.\n");

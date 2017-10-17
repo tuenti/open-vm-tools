@@ -122,7 +122,7 @@ InfoUpdateNetwork(void)
    }
 #endif
 
-   if (!GuestInfo_GetNicInfo(&info)) {
+   if (!GuestInfo_GetNicInfo(NULL, &info)) {
       g_warning("Failed to get nic info\n");
       ret = EXIT_FAILURE;
       goto done;

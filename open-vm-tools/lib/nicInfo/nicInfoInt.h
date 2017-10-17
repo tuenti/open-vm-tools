@@ -34,7 +34,7 @@
 #endif
 
 Bool GuestInfoGetFqdn(int outBufLen, char fqdn[]);
-Bool GuestInfoGetNicInfo(NicInfoV3 *nicInfo);
+Bool GuestInfoGetNicInfo(char nicPrefix[], NicInfoV3 *nicInfo);
 
 GuestNicV3 *GuestInfoAddNicEntry(NicInfoV3 *nicInfo,                    // IN/OUT
                                  const char macAddress[NICINFO_MAC_LEN], // IN

@@ -79,6 +79,14 @@
 #define CONFNAME_GUESTINFO_DISABLEQUERYDISKINFO "disable-query-diskinfo"
 
 /**
+ * Prefix of network interfaces to manage
+ *
+ * @param string Prefix of network interfaces. Leave unset to work on all
+ * interfaces.
+ */
+#define CONFNAME_GUESTINFO_NICPREFIX "nic-prefix"
+
+/**
  * Define a custom GuestInfo poll interval (in seconds).
  *
  * @note Illegal values result in a @c g_warning and fallback to the default

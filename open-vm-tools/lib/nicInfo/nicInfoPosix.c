@@ -129,6 +129,11 @@
 
 
 #ifndef NO_DNET
+typedef struct {
+	gchar     *nic_prefix;
+	NicInfoV3 *nic_info;
+} read_intf_loop_args;
+
 static void RecordNetworkAddress(GuestNicV3 *nic, const struct addr *addr);
 static int ReadInterfaceDetails(const struct intf_entry *entry, void *arg);
 static Bool RecordRoutingInfo(NicInfoV3 *nicInfo);
@@ -229,10 +234,12 @@ CountNetmaskBitsV6(struct sockaddr *netmask)
  */
 
 Bool
-GuestInfoGetNicInfo(NicInfoV3 *nicInfo) // OUT
+GuestInfoGetNicInfo(gchar     *nicPrefix, // IN
+				    NicInfoV3 *nicInfo) // OUT
 {
 #ifndef NO_DNET
    intf_t *intf;
+   read_intf_loop_args loop_args;
 
    /* Get a handle to read the network interface configuration details. */
    if ((intf = intf_open()) == NULL) {
@@ -240,7 +247,9 @@ GuestInfoGetNicInfo(NicInfoV3 *nicInfo) // OUT
       return FALSE;
    }
 
-   if (intf_loop(intf, ReadInterfaceDetails, nicInfo) < 0) {
+   loop_args.nic_prefix = nicPrefix;
+   loop_args.nic_info = nicInfo;
+   if (intf_loop(intf, ReadInterfaceDetails, &loop_args) < 0) {
       intf_close(intf);
       g_debug("Error, negative result from intf_loop\n");
       return FALSE;
@@ -466,13 +475,20 @@ RecordNetworkAddress(GuestNicV3 *nic,           // IN: operand NIC
 
 static int
 ReadInterfaceDetails(const struct intf_entry *entry,  // IN: current interface entry
-                     void *arg)                       // IN: Pointer to the GuestNicList
+                     void *arg)                       // IN: Pointer to the loop arguments
 {
    int i;
-   NicInfoV3 *nicInfo = arg;
+   read_intf_loop_args *loop_args = (read_intf_loop_args *)arg;
 
    ASSERT(entry);
    ASSERT(arg);
+
+   gchar *nicPrefix = loop_args->nic_prefix;
+   NicInfoV3 *nicInfo = loop_args->nic_info;
+
+   if (nicPrefix != NULL && !g_str_has_prefix(entry->intf_name, nicPrefix)) {
+      return 0;
+   }
 
    if (entry->intf_type == INTF_TYPE_ETH &&
        entry->intf_link_addr.addr_type == ADDR_TYPE_ETH) {

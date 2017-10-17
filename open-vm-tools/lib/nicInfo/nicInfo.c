@@ -99,13 +99,13 @@ GuestInfo_GetFqdn(int outBufLen,
  */
 
 Bool
-GuestInfo_GetNicInfo(NicInfoV3 **nicInfo)
+GuestInfo_GetNicInfo(char nicPrefix[], NicInfoV3 **nicInfo)
 {
    Bool retval = FALSE;
 
    *nicInfo = Util_SafeCalloc(1, sizeof (struct NicInfoV3));
 
-   retval = GuestInfoGetNicInfo(*nicInfo);
+   retval = GuestInfoGetNicInfo(nicPrefix, *nicInfo);
    if (!retval) {
       GuestInfo_FreeNicInfo(*nicInfo);
       *nicInfo = NULL;

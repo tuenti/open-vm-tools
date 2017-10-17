@@ -32,7 +32,7 @@
 #include "guestInfo.h"
 
 Bool GuestInfo_GetFqdn(int outBufLen, char fqdn[]);
-Bool GuestInfo_GetNicInfo(NicInfoV3 **nicInfo);
+Bool GuestInfo_GetNicInfo(gchar nicPrefix[], NicInfoV3 **nicInfo);
 void GuestInfo_FreeNicInfo(NicInfoV3 *nicInfo);
 char *GuestInfo_GetPrimaryIP(void);
 
